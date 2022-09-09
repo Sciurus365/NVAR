@@ -4,10 +4,12 @@
 \alias{NVAR}
 \title{Fit a nonlinear vector autoregression model}
 \usage{
-NVAR(data, s, k, p, ...)
+NVAR(data, vars, s, k, p, constant = TRUE, alpha = 0.05)
 }
 \arguments{
-\item{data}{A matrix or data frame that represents a time series of vectors, with each row as a time step.}
+\item{data}{A \code{tibble}, data.frame, or matrix that represents a time series of vectors, with each row as a time step.}
+
+\item{vars}{A character vector of the variable names used in the model.}
 
 \item{s}{The number of time steps used for constructing features.}
 
@@ -15,7 +17,12 @@ NVAR(data, s, k, p, ...)
 
 \item{p}{The order of polynomial feature vector.}
 
-\item{...}{Other parameters passed to \code{\link[glmnet:glmnet]{glmnet::glmnet()}}}
+\item{constant}{Whether there should be a constant value (1) in the feature set? Default is \code{TRUE}.}
+
+\item{alpha}{The \eqn{\alpha} value for ridge regression. Default is 0.05.}
+}
+\value{
+An \code{NVAR} object that contains \code{data}, a tidy form of \code{tibble} that contains the training data, and \code{W_out}, the parameter fit result.
 }
 \description{
 Described by Gauthier et al. (2021), also known as the "next generation reservoir computing" (NG-RC).
@@ -29,7 +36,7 @@ The feature vector is as follows (from the reference):
 
 \deqn{\mathbb{O}_{\text {nonlinear }}^{(p)}=\mathbb{O}_{\text {lin }}\lceil\otimes\rceil \mathbb{O}_{\text {lin }}\lceil\otimes\rceil \ldots\lceil\otimes\rceil \mathbb{O}_{\text {lin }}}
 
-The feature vector \eqn{\mathbb{O}_{\text {total }}} is then used as input for a ridge regression.
+The feature vector \eqn{\mathbb{O}_{\text {total }}} is then used as input for a ridge regression (by\code{\link[glmnet:glmnet]{glmnet::glmnet()}}).
 }
 \references{
 Gauthier, D. J., Bollt, E., Griffith, A., & Barbosa, W. A. S. (2021). Next generation reservoir computing. Nature Communications, 12(1), 5564. https://doi.org/10.1038/s41467-021-25801-2

@@ -1,0 +1,52 @@
+make_expressions <- function(vars, s, k, p) {
+  e_linear <- make_e_linear(vars, s, k)
+  e_nonlinear <- make_e_nonlinear(e_linear, s, k, p)
+  c(e_linear, e_nonlinear)
+}
+
+
+make_e_linear <- function(vars, s, k) {
+  df <- tidyr::expand_grid(vars, 1:k)
+  colnames(df) <- c("vars", "k")
+  e_linear <- purrr::map2(df$vars, df$k, function(vars, k, s) {
+    rlang::expr((!!rlang::sym(vars))[t - !!(s * (k - 1))])
+  }, s = s)
+  return(e_linear)
+}
+
+make_e_nonlinear <- function(e_linear, s, k, p) {
+  nonlinear_power_vector <- all_vecs(sum = p, length = length(e_linear))
+  e_nonlinear <- purrr::map(nonlinear_power_vector, make_monomial, e_linear)
+  return(e_nonlinear)
+}
+
+#' All vectors with length `length` and sum up to `sum`
+#' @noRd
+all_vecs <- function(sum, length, prev = c()){
+  if(length == 1) {
+    return(list(c(prev, sum)))
+  } else {
+    result <- list()
+    for (i in sum:0) {
+      result <- c(result, all_vecs(sum - i, length - 1, prev = c(prev, i)))
+    }
+    return(result)
+  }
+}
+
+make_monomial <- function(power_vector, linear_expressions) {
+  le_to_use <- linear_expressions[power_vector != 0]
+  pv_to_use <- power_vector[power_vector != 0]
+  element_list <- purrr::map2(le_to_use, pv_to_use, function(x, y){
+    if(y == 1) {
+      return(x)
+    } else {
+      return(rlang::expr((!!x)^(!!y)))
+    }
+  })
+  purrr::reduce(element_list, expression_product)
+}
+
+expression_product <- function(a, b) {
+  rlang::expr(!!a*!!b)
+}

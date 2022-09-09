@@ -9,4 +9,4 @@
 library(testthat)
 library(NVAR)
 
-test_check("NVAR")
+test_check("utils-polymial-expression")
