@@ -11,9 +11,9 @@ NVAR(data, vars, s, k, p, constant = TRUE, alpha = 0.05)
 
 \item{vars}{A character vector of the variable names used in the model.}
 
-\item{s}{The number of time steps used for constructing features.}
+\item{s}{The number of time steps skipped between each two used time steps.}
 
-\item{k}{The number of time steps skipped between each two used time steps.}
+\item{k}{The number of time steps used for constructing features.}
 
 \item{p}{The order of polynomial feature vector.}
 
@@ -22,7 +22,7 @@ NVAR(data, vars, s, k, p, constant = TRUE, alpha = 0.05)
 \item{alpha}{The \eqn{\alpha} value for ridge regression. Default is 0.05.}
 }
 \value{
-An \code{NVAR} object that contains \code{data}, a tidy form of \code{tibble} that contains the training data, and \code{W_out}, the parameter fit result.
+An \code{NVAR} object that contains \code{data}, \code{data_td} (a tidy form of \code{tibble} that contains the training data), \code{W_out} (the fitted coefficients), and \code{parameters}.
 }
 \description{
 Described by Gauthier et al. (2021), also known as the "next generation reservoir computing" (NG-RC).
@@ -36,7 +36,7 @@ The feature vector is as follows (from the reference):
 
 \deqn{\mathbb{O}_{\text {nonlinear }}^{(p)}=\mathbb{O}_{\text {lin }}\lceil\otimes\rceil \mathbb{O}_{\text {lin }}\lceil\otimes\rceil \ldots\lceil\otimes\rceil \mathbb{O}_{\text {lin }}}
 
-The feature vector \eqn{\mathbb{O}_{\text {total }}} is then used as input for a ridge regression (by\code{\link[glmnet:glmnet]{glmnet::glmnet()}}).
+The feature vector \eqn{\mathbb{O}_{\text {total }}} is then used as input for a ridge regression with \code{alpha}.
 }
 \references{
 Gauthier, D. J., Bollt, E., Griffith, A., & Barbosa, W. A. S. (2021). Next generation reservoir computing. Nature Communications, 12(1), 5564. https://doi.org/10.1038/s41467-021-25801-2

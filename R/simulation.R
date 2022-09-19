@@ -1,7 +1,27 @@
 #' Time series simulation with an NVAR model
 #'
 #' @param model An `NVAR` model, fitted by [NVAR()].
-#' @param init A `tibble`, data.frame, or matrix that specify the initial values for a simulation. Should contain the variables used to fit the model and be at least \eqn{s * (k - 1)} long.
-sim_NVAR <- function(model, init) {
+#' @param init A `tibble`, data.frame, or matrix that specify the initial values for a simulation. Should contain the variables used to fit the model and be at least \eqn{s * (k - 1)} long. `NULL` by default, in which case the data used for fitting the model will be used for simulation.
+#' @param length How many time steps should be simulated? `1e3` by default.
+#' @export
+sim_NVAR <- function(model, init = NULL, length = 1e3) {
+  if (is.null(init)) {
+    data <- model$data
+  } else {
+    data <- init[, model$parameters$vars]
+  }
+  sim_start <- nrow(data) + 1
+  data_new <- matrix(nrow = length, ncol = length(model$parameters$vars)) %>%
+    `colnames<-`(model$parameters$vars) %>%
+    tibble::as_tibble()
+  data <- dplyr::bind_rows(data, data_new)
 
+  for (i in sim_start:nrow(data)) {
+    feature_vec <- purrr::map_dbl(model$expressions, rlang::eval_tidy, data = data, rlang::env(t = i))
+    result <- t(model$W_out %*% feature_vec)
+    data[i, ] <- result
+  }
+
+  attr(data, "sim_start") <- sim_start
+  return(data)
 }

@@ -4,12 +4,14 @@
 \alias{sim_NVAR}
 \title{Time series simulation with an NVAR model}
 \usage{
-sim_NVAR(model, init)
+sim_NVAR(model, init = NULL, length = 1000)
 }
 \arguments{
 \item{model}{An \code{NVAR} model, fitted by \code{\link[=NVAR]{NVAR()}}.}
 
-\item{init}{A \code{tibble}, data.frame, or matrix that specify the initial values for a simulation. Should contain the variables used to fit the model and be at least \eqn{s * (k - 1)} long.}
+\item{init}{A \code{tibble}, data.frame, or matrix that specify the initial values for a simulation. Should contain the variables used to fit the model and be at least \eqn{s * (k - 1)} long. \code{NULL} by default, in which case the data used for fitting the model will be used for simulation.}
+
+\item{length}{How many time steps should be simulated? \code{1e3} by default.}
 }
 \description{
 Time series simulation with an NVAR model
