@@ -16,6 +16,7 @@ Imports:
     magrittr,
     purrr,
     rlang,
+    stats,
     tibble,
     tidyr
 Suggests: 

@@ -3,8 +3,10 @@
 #' @param model An `NVAR` model, fitted by [NVAR()].
 #' @param init A `tibble`, data.frame, or matrix that specify the initial values for a simulation. Should contain the variables used to fit the model and be at least \eqn{s * (k - 1)} long. `NULL` by default, in which case the data used for fitting the model will be used for simulation.
 #' @param length How many time steps should be simulated? `1e3` by default.
+#' @param noise A number indicating the standard deviation of the Gaussian noise
+#' added to each time step. `0` by default (no noise).
 #' @export
-sim_NVAR <- function(model, init = NULL, length = 1e3) {
+sim_NVAR <- function(model, init = NULL, length = 1e3, noise = 0) {
   if (is.null(init)) {
     data <- model$data
   } else {
@@ -18,7 +20,7 @@ sim_NVAR <- function(model, init = NULL, length = 1e3) {
 
   for (i in sim_start:nrow(data)) {
     feature_vec <- purrr::map_dbl(model$expressions, rlang::eval_tidy, data = data, rlang::env(t = i))
-    result <- t(model$W_out %*% feature_vec)
+    result <- t(model$W_out %*% feature_vec) + stats::rnorm(length(model$parameters$vars), sd = noise)
     data[i, ] <- result
   }
 

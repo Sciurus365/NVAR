@@ -1,3 +1,18 @@
+make_tidy_data <- function(data, vars, s, k, expressions) {
+  features <- purrr::map_chr(expressions, rlang::expr_text, width = 500L)
+  total_time <- nrow(data)
+  warming_time <- s * (k - 1)
+  training_time <- (warming_time + 2):nrow(data)
+  df <- tidyr::expand_grid(t = training_time, expr_feature = expressions)
+  df <- df %>%
+    dplyr::rowwise() %>%
+    dplyr::mutate(value = rlang::eval_tidy(expr_feature, data = data[, vars], rlang::env(t = t))) %>%
+    dplyr::ungroup() %>%
+    tidyr::pivot_wider(id_cols = t, names_from = expr_feature, values_from = value) %>%
+    dplyr::bind_cols(data[training_time[1:(length(training_time))], vars])
+  return(structure(df, features = features, vars = vars))
+}
+
 make_expressions <- function(vars, s, k, p, constant) {
   e_linear <- make_e_linear(vars, s, k)
   e_nonlinear <- make_e_nonlinear(e_linear, s, k, p)

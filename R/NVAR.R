@@ -41,21 +41,24 @@ NVAR <- function(data, vars, s, k, p, constant = TRUE, alpha = 0.05) {
 
 #' @export
 print.NVAR <- function(x, ...) {
-  cat("Coefficients:\n")
+  cat("An NVAR model with the following coefficients:\n")
   print(x$W_out)
 }
 
-make_tidy_data <- function(data, vars, s, k, expressions) {
-  features <- purrr::map_chr(expressions, rlang::expr_text)
-  total_time <- nrow(data)
-  warming_time <- s * (k - 1)
-  training_time <- (warming_time + 2):nrow(data)
-  df <- tidyr::expand_grid(t = training_time, expr_feature = expressions)
-  df <- df %>%
-    dplyr::rowwise() %>%
-    dplyr::mutate(value = rlang::eval_tidy(expr_feature, data = data[, vars], rlang::env(t = t))) %>%
-    dplyr::ungroup() %>%
-    tidyr::pivot_wider(id_cols = t, names_from = expr_feature, values_from = value) %>%
-    dplyr::bind_cols(data[training_time[1:(length(training_time))], vars])
-  return(structure(df, features = features, vars = vars))
+#' @export
+summary.NVAR <- function(object, ...) {
+  alpha <- object$parameters$alpha
+  nfeature <- length(object$expressions)
+
+  predicted <- as.matrix(object$data_td[, attr(object$data_td, "features")]) %*% t(object$W_out)
+  error <- as.matrix(object$data_td[, object$parameter$vars]) - predicted
+  rmse <- sqrt(mean(rowSums(error^2)))
+  return(structure(list(alpha = alpha, nfeature = nfeature, rmse = rmse), class = "NVAR_summary"))
+}
+
+#' @export
+print.NVAR_summary <- function(x, ...) {
+  cat(sprintf(
+    "alpha: %f\nnumber of features: %d\nrmse: %f", x$alpha, as.integer(x$nfeature), x$rmse
+  ))
 }
