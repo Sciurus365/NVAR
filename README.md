@@ -1,16 +1,20 @@
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 # NVAR: Nonlinear Vector Autoregression Models
 
 <!-- badges: start -->
-
 <!-- badges: end -->
 
-Estimate nonlinear vector autoregression models (also known as the next generation reservoir computing) for nonlinear dynamic systems. The algorithm was described by Gauthier et al. (<doi:10.1038/s41467-021-25801-2>).
+Estimate nonlinear vector autoregression models (also known as the next
+generation reservoir computing) for nonlinear dynamic systems. The
+algorithm was described by Gauthier et
+al. (<doi:10.1038/s41467-021-25801-2>).
 
 ## Installation
 
-You can install the development version of NVAR from [GitHub](https://github.com/) with:
+You can install the development version of NVAR from
+[GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
@@ -42,7 +46,7 @@ ggplot(realdata) +
   labs(x = "time", y = "x")
 ```
 
-<img src="man/figures/README-example-1.png" width="100%"/>
+<img src="man/figures/README-example-1.png" width="100%" />
 
 ``` r
 
