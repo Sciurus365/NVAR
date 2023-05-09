@@ -25,7 +25,7 @@
 #' @export
 #' @references Gauthier, D. J., Bollt, E., Griffith, A., & Barbosa, W. A. S. (2021). Next generation reservoir computing. Nature Communications, 12(1), 5564. https://doi.org/10.1038/s41467-021-25801-2
 NVAR <- function(data, vars, s, k, p, constant = TRUE, alpha = 0.05) {
-  data <- tibble::as_tibble(data[, vars])
+  data <- tibble::as_tibble(data[, vars, drop = FALSE])
   d <- ncol(data)
   if ((d * k)^p > 100) warning("A large number of features will be created.")
 
@@ -36,7 +36,12 @@ NVAR <- function(data, vars, s, k, p, constant = TRUE, alpha = 0.05) {
   W_out <- NULL
   W_out <- t(Y) %*% O_total %*% solve(t(O_total) %*% O_total + alpha * diag(ncol(O_total)))
 
-  return(structure(list(data = data, data_td = td, W_out = W_out, expressions = expressions, parameters = list(vars = vars, s = s, k = k, p = p, constant = constant, alpha = alpha)), class = "NVAR"))
+  nfeature <- length(expressions)
+  predicted <- as.matrix(td[, attr(td, "features")]) %*% t(W_out)
+  error <- as.matrix(td[, vars]) - predicted
+  rmse <- sqrt(mean(rowSums(error^2)))
+
+  return(structure(list(data = data, data_td = td, W_out = W_out, expressions = expressions, parameters = list(vars = vars, s = s, k = k, p = p, constant = constant, alpha = alpha), nfeature = nfeature, predicted = predicted, error = error, rmse = rmse), class = "NVAR"))
 }
 
 #' @export
@@ -47,18 +52,7 @@ print.NVAR <- function(x, ...) {
 
 #' @export
 summary.NVAR <- function(object, ...) {
-  alpha <- object$parameters$alpha
-  nfeature <- length(object$expressions)
-
-  predicted <- as.matrix(object$data_td[, attr(object$data_td, "features")]) %*% t(object$W_out)
-  error <- as.matrix(object$data_td[, object$parameter$vars]) - predicted
-  rmse <- sqrt(mean(rowSums(error^2)))
-  return(structure(list(alpha = alpha, nfeature = nfeature, rmse = rmse), class = "NVAR_summary"))
-}
-
-#' @export
-print.NVAR_summary <- function(x, ...) {
   cat(sprintf(
-    "alpha: %f\nnumber of features: %d\nrmse: %f", x$alpha, as.integer(x$nfeature), x$rmse
+    "alpha: %f\nnumber of features: %d\nrmse: %f", object$alpha, as.integer(object$nfeature), object$rmse
   ))
 }
