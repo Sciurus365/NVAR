@@ -6,10 +6,14 @@ make_tidy_data <- function(data, vars, s, k, expressions) {
   df <- tidyr::expand_grid(t = training_time, expr_feature = expressions)
 
   data_vars <- rlang::as_data_mask(data[, vars])
+  env_t <- rlang::new_environment(list(t = NA_integer_), globalenv())
   df <- df %>%
-    dplyr::mutate(value = purrr::map2_dbl(expr_feature, t, function(expr_feature, t) rlang::eval_tidy(expr_feature, data = data_vars, env = rlang::new_environment(list(t = t), globalenv())))) %>%
-    tidyr::pivot_wider(id_cols = t, names_from = expr_feature, values_from = value) %>%
-    dplyr::bind_cols(data[training_time[1:(length(training_time))], vars])
+  dplyr::mutate(value = purrr::map2_dbl(expr_feature, t, function(expr_feature, t) {
+    env_t$t <- t
+    rlang::eval_tidy(expr_feature, data = data_vars, env = env_t)
+  })) %>%
+  tidyr::pivot_wider(id_cols = t, names_from = expr_feature, values_from = value) %>%
+  dplyr::bind_cols(data[training_time[1:(length(training_time))], vars])
   return(structure(df, features = features, vars = vars))
 }
 
