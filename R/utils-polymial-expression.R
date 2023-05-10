@@ -5,11 +5,9 @@ make_tidy_data <- function(data, vars, s, k, expressions) {
   training_time <- (warming_time + 2):nrow(data)
   df <- tidyr::expand_grid(t = training_time, expr_feature = expressions)
 
-  data_vars <- data[, vars]
+  data_vars <- rlang::as_data_mask(data[, vars])
   df <- df %>%
-    dplyr::rowwise() %>%
-    dplyr::mutate(value = rlang::eval_tidy(expr_feature, data = c(data_vars, t = t))) %>%
-    dplyr::ungroup() %>%
+    dplyr::mutate(value = purrr::map2_dbl(expr_feature, t, function(expr_feature, t) rlang::eval_tidy(expr_feature, data = data_vars, env = rlang::new_environment(list(t = t), globalenv())))) %>%
     tidyr::pivot_wider(id_cols = t, names_from = expr_feature, values_from = value) %>%
     dplyr::bind_cols(data[training_time[1:(length(training_time))], vars])
   return(structure(df, features = features, vars = vars))
