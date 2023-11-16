@@ -40,7 +40,7 @@ library(NVAR)
 
 testdata <- nonlinearTseries::lorenz()
 testdata <- tibble::as_tibble(testdata)
-t1 <- NVAR(data = testdata, vars = c("x", "y", "z"), s = 2, k = 2, p = 2, alpha = 1e-3)
+t1 <- NVAR(data = testdata, vars = c("x", "y", "z"), s = 2, k = 2, p = 2, lambda = 1e-3)
 t1_sim <- sim_NVAR(t1, length = 5000)
 
 

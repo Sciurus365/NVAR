@@ -4,7 +4,16 @@
 \alias{NVAR}
 \title{Fit a nonlinear vector autoregression model}
 \usage{
-NVAR(data, vars, s, k, p, constant = TRUE, alpha = 0.05)
+NVAR(
+  data,
+  vars,
+  s,
+  k,
+  p,
+  constant = TRUE,
+  lambda = 0.05,
+  penalize = c("ridge", "lasso")
+)
 }
 \arguments{
 \item{data}{A \code{tibble}, data.frame, or matrix that represents a time series of vectors, with each row as a time step.}
@@ -19,7 +28,9 @@ NVAR(data, vars, s, k, p, constant = TRUE, alpha = 0.05)
 
 \item{constant}{Whether there should be a constant value (1) in the feature set? Default is \code{TRUE}.}
 
-\item{alpha}{The \eqn{\alpha} value for ridge regression. Default is 0.05.}
+\item{lambda}{The \eqn{\lambda} value for the penalized regression. Default is 0.05.}
+
+\item{penalize}{The penalizing method. "ridge" by default, can also be "lasso".}
 }
 \value{
 An \code{NVAR} object that contains \code{data}, \code{data_td} (a tidy form of \code{tibble} that contains the training data), \code{W_out} (the fitted coefficients), and \code{parameters}.
@@ -36,7 +47,7 @@ The feature vector is as follows (from the reference):
 
 \deqn{\mathbb{O}_{\text {nonlinear }}^{(p)}=\mathbb{O}_{\text {lin }}\lceil\otimes\rceil \mathbb{O}_{\text {lin }}\lceil\otimes\rceil \ldots\lceil\otimes\rceil \mathbb{O}_{\text {lin }}}
 
-The feature vector \eqn{\mathbb{O}_{\text {total }}} is then used as input for a ridge regression with \code{alpha}.
+The feature vector \eqn{\mathbb{O}_{\text {total }}} is then used as input for a penalized regression with \code{lambda}.
 }
 \references{
 Gauthier, D. J., Bollt, E., Griffith, A., & Barbosa, W. A. S. (2021). Next generation reservoir computing. Nature Communications, 12(1), 5564. https://doi.org/10.1038/s41467-021-25801-2
