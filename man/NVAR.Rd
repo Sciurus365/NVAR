@@ -2,53 +2,22 @@
 % Please edit documentation in R/NVAR.R
 \name{NVAR}
 \alias{NVAR}
-\title{Fit a nonlinear vector autoregression model}
+\title{Estimate Lag-1 Nested Nonlinear Vector Autoregressive Models}
 \usage{
-NVAR(
-  data,
-  vars,
-  s,
-  k,
-  p,
-  constant = TRUE,
-  lambda = 0.05,
-  penalize = c("ridge", "lasso")
-)
+NVAR(data, vars, p, ...)
 }
 \arguments{
 \item{data}{A \code{tibble}, data.frame, or matrix that represents a time series of vectors, with each row as a time step.}
 
 \item{vars}{A character vector of the variable names used in the model.}
 
-\item{s}{The number of time steps skipped between each two used time steps.}
+\item{p}{The maximum order of polynomial feature vector.}
 
-\item{k}{The number of time steps used for constructing features.}
-
-\item{p}{The order of polynomial feature vector.}
-
-\item{constant}{Whether there should be a constant value (1) in the feature set? Default is \code{TRUE}.}
-
-\item{lambda}{The \eqn{\lambda} value for the penalized regression. Default is 0.05.}
-
-\item{penalize}{The penalizing method. "ridge" by default, can also be "lasso".}
+\item{...}{Parameters passed to \code{\link[MuMIn:dredge]{MuMIn::dredge()}} for model selection.}
 }
 \value{
-An \code{NVAR} object that contains \code{data}, \code{data_td} (a tidy form of \code{tibble} that contains the training data), \code{W_out} (the fitted coefficients), and \code{parameters}.
+An \code{NVAR2} object that contains \code{data}, \code{data_td} (a tidy form of \code{tibble} that contains the training data), \code{W_out} (the fitted coefficients), and \code{parameters}.
 }
 \description{
-Described by Gauthier et al. (2021), also known as the "next generation reservoir computing" (NG-RC).
-}
-\details{
-The feature vector is as follows (from the reference):
-
-\deqn{\mathbb{O}_{\text {total }}=\mathbb{O}_{\text {lin }} \oplus \mathbb{O}_{\text {nonlinear }}^{(p)}}
-
-\deqn{\mathbb{O}_{\operatorname{lin}, i}=\mathbf{X}_i \oplus \mathbf{X}_{i-s} \oplus \mathbf{X}_{i-2 s} \oplus \ldots \oplus \mathbf{X}_{i-(k-1) s}}
-
-\deqn{\mathbb{O}_{\text {nonlinear }}^{(p)}=\mathbb{O}_{\text {lin }}\lceil\otimes\rceil \mathbb{O}_{\text {lin }}\lceil\otimes\rceil \ldots\lceil\otimes\rceil \mathbb{O}_{\text {lin }}}
-
-The feature vector \eqn{\mathbb{O}_{\text {total }}} is then used as input for a penalized regression with \code{lambda}.
-}
-\references{
-Gauthier, D. J., Bollt, E., Griffith, A., & Barbosa, W. A. S. (2021). Next generation reservoir computing. Nature Communications, 12(1), 5564. https://doi.org/10.1038/s41467-021-25801-2
+This function estimate a set of linear and nonlinear autoregressive models, find the best model according to an information criterion, and compare it with the linear AR and VAR models.
 }
