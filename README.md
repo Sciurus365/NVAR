@@ -4,6 +4,10 @@
 # NVAR: Nonlinear Vector Autoregression Models
 
 <!-- badges: start -->
+
+[![R-CMD-check](https://github.com/Sciurus365/NVAR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Sciurus365/NVAR/actions/workflows/R-CMD-check.yaml)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/NVAR)](https://CRAN.R-project.org/package=NVAR)
 <!-- badges: end -->
 
 Estimate nonlinear vector autoregression models (also known as the next
