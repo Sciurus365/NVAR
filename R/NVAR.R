@@ -10,7 +10,7 @@
 #'
 #' \deqn{\mathbb{O}_{\text {nonlinear }}^{(p)}=\mathbb{O}_{\text {lin }}\lceil\otimes\rceil \mathbb{O}_{\text {lin }}\lceil\otimes\rceil \ldots\lceil\otimes\rceil \mathbb{O}_{\text {lin }}}
 #'
-#' The feature vector \eqn{\mathbb{O}_{\text {total }}} is then used as input for a penalized regression with `alpha`.
+#' The feature vector \eqn{\mathbb{O}_{\text {total }}} is then used as input for a ridge regression with `alpha`.
 #'
 #' @param data A `tibble`, data.frame, or matrix that represents a time series of vectors, with each row as a time step.
 #' @param vars A character vector of the variable names used in the model.
@@ -18,14 +18,13 @@
 #' @param k The number of time steps used for constructing features.
 #' @param p The order of polynomial feature vector.
 #' @param constant Whether there should be a constant value (1) in the feature set? Default is `TRUE`.
-#' @param alpha The \eqn{\alpha} value for the penalized regression. Default is 0.05.
-#' @param penalize The penalizing method. "ridge" by default, can also be "lasso".
+#' @param alpha The \eqn{\alpha} value for ridge regression. Default is 0.05.
 #'
 #' @return An `NVAR` object that contains `data`, `data_td` (a tidy form of `tibble` that contains the training data), `W_out` (the fitted coefficients), and `parameters`.
 #'
 #' @export
 #' @references Gauthier, D. J., Bollt, E., Griffith, A., & Barbosa, W. A. S. (2021). Next generation reservoir computing. Nature Communications, 12(1), 5564. https://doi.org/10.1038/s41467-021-25801-2
-NVAR <- function(data, vars, s, k, p, constant = TRUE, alpha = 0.05, penalize = c("ridge", "lasso")) {
+NVAR <- function(data, vars, s, k, p, constant = TRUE, alpha = 0.05) {
   data <- tibble::as_tibble(data[, vars, drop = FALSE])
   d <- ncol(data)
   if ((d * k)^p > 100) warning("A large number of features will be created.")
@@ -35,15 +34,7 @@ NVAR <- function(data, vars, s, k, p, constant = TRUE, alpha = 0.05, penalize = 
   Y <- as.matrix(td[, attr(td, "vars")])
   O_total <- as.matrix(td[, attr(td, "features")])
   W_out <- NULL
-  if(penalize[1] == "ridge"){
-    W_out <- t(Y) %*% O_total %*% solve(t(O_total) %*% O_total + alpha * diag(ncol(O_total)))
-  } else if(penalize[1] == "lasso"){
-    # W_out <- t(Y) %*% O_total %*% solve(t(O_total) %*% O_total + alpha * diag(ncol(O_total)))
-    # move to `glmnet` here. with CV.
-  } else {
-    stop("`penalize` must be either 'ridge' or 'lasso'.")
-  }
-
+  W_out <- t(Y) %*% O_total %*% solve(t(O_total) %*% O_total + alpha * diag(ncol(O_total)))
 
   nfeature <- length(expressions)
   predicted <- as.matrix(td[, attr(td, "features")]) %*% t(W_out)
