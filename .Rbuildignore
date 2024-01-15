@@ -6,3 +6,4 @@
 ^.*\.temp\.R$
 ^.*\.RDS$
 ^\.github$
+^cran-comments\.md$
