@@ -1,3 +1,7 @@
+* This is a re-submission, in which the following issues were solved:
+	* Added \value field to `sim_NVAR()`.
+	* Added examples for `NVAR()`.
+
 ## Test environments
 
 * local R installation in Windows R 4.3.2

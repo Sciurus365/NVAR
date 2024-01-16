@@ -23,7 +23,20 @@
 #' @return An `NVAR` object that contains `data`, `data_td` (a tidy form of `tibble` that contains the training data), `W_out` (the fitted coefficients), and `parameters`.
 #'
 #' @export
+#'
+#' @examples
+#' # generate test data from the Lorenz system
+#' testdata <- nonlinearTseries::lorenz()
+#' testdata <- tibble::as_tibble(testdata)
+#' # fit an NVAR model for the Lorenz system
+#' t1 <- NVAR(data = testdata, vars = c("x", "y", "z"), s = 2, k = 2, p = 2, alpha = 1e-3)
+#' # simulate the NVAR model
+#' t1_sim <- sim_NVAR(t1, length = 5000)
+#' # (also see README for the plots of the results and the comparison with the true model)
+#'
 #' @references Gauthier, D. J., Bollt, E., Griffith, A., & Barbosa, W. A. S. (2021). Next generation reservoir computing. Nature Communications, 12(1), 5564. https://doi.org/10.1038/s41467-021-25801-2
+#'
+#' @seealso [sim_NVAR()] for simulating the NVAR model.
 NVAR <- function(data, vars, s, k, p, constant = TRUE, alpha = 0.05) {
   data <- tibble::as_tibble(data[, vars, drop = FALSE])
   d <- ncol(data)

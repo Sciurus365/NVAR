@@ -25,6 +25,9 @@ added to each time step. \code{0} by default (no noise).}
 
 \item{upper_lim, lower_lim}{The upper and lower limit for the simulation. Once the simulated value is out of the limits, it will be taken back to avoid instability of the simulation. Both should either be a single number or a numeric vector with the same length as the number of variables in the model. \code{Inf} and \code{-Inf} by default, which means no limits.}
 }
+\value{
+A \code{tibble} with the simulated time series.
+}
 \description{
 Time series simulation with an NVAR model
 }

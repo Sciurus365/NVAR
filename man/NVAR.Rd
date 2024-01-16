@@ -38,6 +38,20 @@ The feature vector is as follows (from the reference):
 
 The feature vector \eqn{\mathbb{O}_{\text {total }}} is then used as input for a ridge regression with \code{alpha}.
 }
+\examples{
+# generate test data from the Lorenz system
+testdata <- nonlinearTseries::lorenz()
+testdata <- tibble::as_tibble(testdata)
+# fit an NVAR model for the Lorenz system
+t1 <- NVAR(data = testdata, vars = c("x", "y", "z"), s = 2, k = 2, p = 2, alpha = 1e-3)
+# simulate the NVAR model
+t1_sim <- sim_NVAR(t1, length = 5000)
+# (also see README for the plots of the results and the comparison with the true model)
+
+}
 \references{
 Gauthier, D. J., Bollt, E., Griffith, A., & Barbosa, W. A. S. (2021). Next generation reservoir computing. Nature Communications, 12(1), 5564. https://doi.org/10.1038/s41467-021-25801-2
+}
+\seealso{
+\code{\link[=sim_NVAR]{sim_NVAR()}} for simulating the NVAR model.
 }

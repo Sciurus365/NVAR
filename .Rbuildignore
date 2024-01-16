@@ -7,3 +7,4 @@
 ^.*\.RDS$
 ^\.github$
 ^cran-comments\.md$
+^CRAN-SUBMISSION$

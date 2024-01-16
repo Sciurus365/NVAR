@@ -7,6 +7,7 @@
 #' added to each time step. `0` by default (no noise).
 #'
 #' @param upper_lim,lower_lim The upper and lower limit for the simulation. Once the simulated value is out of the limits, it will be taken back to avoid instability of the simulation. Both should either be a single number or a numeric vector with the same length as the number of variables in the model. `Inf` and `-Inf` by default, which means no limits.
+#' @return A `tibble` with the simulated time series.
 #' @export
 sim_NVAR <- function(model, init = NULL, length = 1e3, noise = 0,
                      upper_lim = Inf, lower_lim = -Inf) {
