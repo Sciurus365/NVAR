@@ -12,8 +12,8 @@ status](https://www.r-pkg.org/badges/version/NVAR)](https://CRAN.R-project.org/p
 
 Estimate nonlinear vector autoregression models (also known as the next
 generation reservoir computing) for nonlinear dynamic systems. The
-algorithm was described by Gauthier et
-al. (<doi:10.1038/s41467-021-25801-2>).
+algorithm was described by Gauthier et al. (2021)
+<doi:10.1038/s41467-021-25801-2>.
 
 ## Installation
 
